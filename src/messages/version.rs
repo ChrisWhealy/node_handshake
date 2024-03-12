@@ -1,19 +1,16 @@
+use bitcoin::{
+    p2p::{self, address, message, message_network},
+    secp256k1::rand::{self, Rng},
+};
 use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use bitcoin::{
-    p2p::{self, address, message_network},
-    secp256k1::rand::{self, Rng},
-};
+use crate::messages::PROTOCOL_VERSION;
 
-#[allow(dead_code)]
-const PROTOCOL_VERSION: u32 = 70015;
-
-pub fn version_msg(to_address: SocketAddr) -> message_network::VersionMessage {
-    // Message format as per documentation https://en.bitcoin.it/wiki/Protocol_documentation#version
-    //
+// Message format as per documentation https://en.bitcoin.it/wiki/Protocol_documentation#version
+pub fn version_msg(to_address: SocketAddr) -> message::NetworkMessage {
     // Various message fields do not need to be populated, either because they will be ignored anyway, or because this is
     // just a is minimal PoC implementation
     //
@@ -25,7 +22,7 @@ pub fn version_msg(to_address: SocketAddr) -> message_network::VersionMessage {
         .expect("error: Unable to get system time")
         .as_secs();
 
-    message_network::VersionMessage {
+    message::NetworkMessage::Version(message_network::VersionMessage {
         version: PROTOCOL_VERSION,
         services: p2p::ServiceFlags::NONE,
         timestamp: now as i64,
@@ -35,5 +32,5 @@ pub fn version_msg(to_address: SocketAddr) -> message_network::VersionMessage {
         user_agent: "P2P Handshake PoC".to_owned(),
         start_height: 0,
         relay: false,
-    }
+    })
 }
