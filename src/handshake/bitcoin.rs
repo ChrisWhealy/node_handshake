@@ -5,6 +5,7 @@ use bitcoin::{
         PROTOCOL_VERSION,
     },
 };
+use futures::future;
 use std::time::Duration;
 use std::{
     io::BufReader,
@@ -33,7 +34,23 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
 
     let read_stream = write_stream.try_clone()?;
     let mut stream_reader = BufReader::new(read_stream);
-    let response1 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
+
+    // Target node might be slow in responding to VERSION message
+    let response1 = if let Ok(net_msg) = tokio::time::timeout(
+        Duration::from_secs(timeout),
+        future::ready(message::RawNetworkMessage::consensus_decode(
+            &mut stream_reader,
+        )?),
+    )
+    .await
+    {
+        net_msg
+    } else {
+        return Err(CustomError(format!(
+            "TIMEOUT: {} failed to respond to VERSION message within {} seconds",
+            to_address, timeout
+        )));
+    };
 
     // What did we get back?
     match response1.payload() {
@@ -82,6 +99,7 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
         ),
     }
 
+    // By the time we get to here, the TCP stream has sometimes already shutdown; in which case, this is just a warning
     match write_stream.shutdown(std::net::Shutdown::Both) {
         Ok(_) => {}
         Err(e) => warn!("TCP stream shutdown failed: {}", e),
