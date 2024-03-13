@@ -10,15 +10,15 @@ pub static FIVE_SECONDS: Duration = Duration::from_secs(5);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout: u64) -> Result<()> {
-    let name_resolver = DnsNameResolver::new(dns_seed_node);
+    let name_resolver = DnsNameResolver::new(dns_seed_node, Some(timeout));
     let resolved_names = name_resolver.resolve_names().await;
 
-    for address in resolved_names {
-        info!("Attempting handshake with {:?}:{}", address, port);
+    for ip_addr in resolved_names {
+        info!("Attempting handshake with {:?}:{}", ip_addr, port);
 
-        match shake_my_hand(address, port, timeout).await {
-            Ok(_) => info!("Handshake with {:?}:{} succeeded\n", address, port),
-            Err(e) => error!("Handshake with {:?}:{} failed: {}\n", address, port, e),
+        match shake_my_hand(ip_addr, port, timeout).await {
+            Ok(_) => info!("Handshake with {:?}:{} succeeded\n", ip_addr, port),
+            Err(e) => error!("Handshake with {:?}:{} failed: {}\n", ip_addr, port, e),
         }
     }
 

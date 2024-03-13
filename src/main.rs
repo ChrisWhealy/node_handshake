@@ -1,8 +1,11 @@
 use clap::Parser;
-use node_handshake::{error::Result, handshake::{FIVE_SECONDS, PORT_BITCOIN}};
+use node_handshake::{
+    error::Result,
+    handshake::{start_handshakes, FIVE_SECONDS, PORT_BITCOIN},
+};
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[derive(Parser)]
-#[command(version, about, long_about = None)]
 pub struct SeedArgs {
     pub dns_seed_name: String,
 
@@ -13,10 +16,11 @@ pub struct SeedArgs {
     pub timeout: u64,
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
     let args = SeedArgs::parse();
 
-    node_handshake::start_handshakes(args.dns_seed_name, args.port, args.timeout).await
+    start_handshakes(args.dns_seed_name, args.port, args.timeout).await
 }

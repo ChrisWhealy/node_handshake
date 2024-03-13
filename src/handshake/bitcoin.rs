@@ -28,7 +28,6 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
     info!("Connecting to {}:{}", to_address, port);
     let mut write_stream = TcpStream::connect_timeout(&target_node, Duration::from_secs(timeout))?;
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Build and send version message
     send_msg_version(&target_node, &mut write_stream)?;
 
@@ -83,7 +82,10 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
         ),
     }
 
-    write_stream.shutdown(std::net::Shutdown::Both)?;
+    match write_stream.shutdown(std::net::Shutdown::Both) {
+        Ok(_) => {}
+        Err(e) => warn!("TCP stream shutdown failed: {}", e),
+    }
 
     Ok(())
 }

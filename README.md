@@ -45,6 +45,7 @@ Suggested DNS seed names include:
 If a port number is not supplied, the default is `8333`.
 
 If a timeout is not supplied, the default is 5 seconds.
+This timeout value applies to all network requests including DNS name resolution.
 
 ## Possible Output
 
