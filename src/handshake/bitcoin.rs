@@ -1,32 +1,32 @@
 use bitcoin::{
     consensus::Decodable,
-    p2p::message::{self},
+    p2p::{
+        message::{self},
+        PROTOCOL_VERSION,
+    },
 };
+use std::time::Duration;
 use std::{
     io::BufReader,
     net::{IpAddr, SocketAddr, TcpStream},
 };
-use tracing::{info, warn};
+use tracing::{error, info, warn};
 
 use crate::{
     error::Result,
-    handshake::{
-        send_message::{send_msg_verack, send_msg_version},
-        PORT_BITCOIN, TIMEOUT,
-    },
-    messages::PROTOCOL_VERSION,
+    handshake::send_message::{send_msg_verack, send_msg_version},
     Error::CustomError,
 };
 
 static PROTOCOL_VIOLATION_UNEXPECTED_VERACK: &str =
-    "Protocol violation: Target node sent VERACK before VERSION message";
+    "Fatal Protocol Violation: Target node sent VERACK before VERSION message";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
-    let target_node = SocketAddr::new(to_address, PORT_BITCOIN);
+pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Result<()> {
+    let target_node = SocketAddr::new(to_address, port);
 
-    info!("Connecting to {}:{}", to_address, PORT_BITCOIN);
-    let mut write_stream = TcpStream::connect_timeout(&target_node, TIMEOUT)?;
+    info!("Connecting to {}:{}", to_address, port);
+    let mut write_stream = TcpStream::connect_timeout(&target_node, Duration::from_secs(timeout))?;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Build and send version message
@@ -39,14 +39,17 @@ pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
     // What did we get back?
     match response1.payload() {
         message::NetworkMessage::Version(some_version) => {
-            // Are we agreed on the message version?
-            if some_version.version != PROTOCOL_VERSION {
-                warn!(
-                    "VERSION mismatch: Target node at {}, expected {}",
+            // Does the target node understand?
+            if some_version.version < PROTOCOL_VERSION {
+                error!(
+                    "VERSION mismatch: Target node at version {}.  Expected version >= {}",
                     some_version.version, PROTOCOL_VERSION
                 )
             } else {
-                info!("VERSION: Target node agreed on message version");
+                info!(
+                    "VERSION: Target node accepts messages up to version {}",
+                    some_version.version
+                );
             }
         }
 
@@ -56,10 +59,11 @@ pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
         }
 
         _ => {
-            warn!(
-                "Protocol violation (non-fatal): Expected VERSION, instead got {:?}",
+            let err_msg = format!(
+                "Target node failed to respond with VERSION message.  Instead got {:?}",
                 response1.payload()
             );
+            return Err(CustomError(err_msg));
         }
     }
 
@@ -74,7 +78,7 @@ pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
         message::NetworkMessage::Verack => info!("VERACK received"),
 
         _ => warn!(
-            "Protocol violation (non-fatal): Expected VERACK, instead got {:?}",
+            "Target node skipped VERACK.  Instead got {:?}",
             response2.payload()
         ),
     }
@@ -82,23 +86,4 @@ pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
     write_stream.shutdown(std::net::Shutdown::Both)?;
 
     Ok(())
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::net::{IpAddr, Ipv4Addr};
-    use tracing::error;
-
-    #[tokio::test]
-    async fn should_perform_handshake_to_single_target_node() {
-        let address = IpAddr::V4(Ipv4Addr::new(88, 98, 84, 206));
-
-        if let Ok(_) = shake_my_hand(address).await {
-            info!("Handshake with {:?} succeeded\n", address);
-        } else {
-            error!("Handshake with {:?} failed\n", address);
-        };
-    }
 }

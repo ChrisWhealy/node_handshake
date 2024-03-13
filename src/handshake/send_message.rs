@@ -1,4 +1,4 @@
-use bitcoin::{consensus::encode, p2p::message};
+use bitcoin::{consensus::encode, p2p::{PROTOCOL_VERSION, message}};
 use std::{
     io::Write,
     net::{SocketAddr, TcpStream},
@@ -7,7 +7,7 @@ use tracing::info;
 
 use crate::{
     error::Result,
-    messages::{verack::verack_msg, version::version_msg, PROTOCOL_VERSION},
+    messages::{verack::verack_msg, version::version_msg},
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -22,7 +22,6 @@ pub fn send_msg_version(target_node: &SocketAddr, write_stream: &mut TcpStream) 
         msg_bytes.len(),
         target_node
     );
-
     write_stream.write_all(&msg_bytes)?;
     info!("VERSION: Sent");
 
@@ -40,7 +39,6 @@ pub fn send_msg_verack(target_node: &SocketAddr, write_stream: &mut TcpStream) -
         msg_bytes.len(),
         target_node
     );
-
     write_stream.write_all(&msg_bytes)?;
     info!("VERACK: Sent");
 
