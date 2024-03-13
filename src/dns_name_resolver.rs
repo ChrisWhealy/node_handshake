@@ -36,6 +36,7 @@ impl DnsNameResolver {
         // I can haz IP addresses?
         match tokio::time::timeout(self.timeout, self.resolver.lookup_ip(&lookup_name)).await {
             Ok(Ok(list_of_ips)) => {
+                // START --> pretty tracing
                 let ips = list_of_ips.clone();
                 let mut count: u16 = 1;
 
@@ -50,6 +51,7 @@ impl DnsNameResolver {
                     count,
                     if count == 1 { "" } else { "es" },
                 );
+                // END --> pretty tracing
 
                 ip_list.extend(list_of_ips);
             }

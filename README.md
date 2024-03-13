@@ -53,6 +53,7 @@ The supplied DNS name will, mostly likely, resolve to multiple IP addresses.
 However, the availability of a responsive P2P node at each of these IP addresses is uncertain; therefore each time you run this program against the same DNS seed node, you may receive differing results.
 
 ```shell
+$ export RUST_LOG=info
 $ cargo run mx.jamestrev.com
     Finished dev [unoptimized + debuginfo] target(s) in 0.41s
      Running `target/debug/node-handshake mx.jamestrev.com`

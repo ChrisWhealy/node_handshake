@@ -5,11 +5,10 @@ use bitcoin::{
         PROTOCOL_VERSION,
     },
 };
-use futures::future;
-use std::time::Duration;
 use std::{
     io::BufReader,
     net::{IpAddr, SocketAddr, TcpStream},
+    time::{Duration, SystemTime},
 };
 use tracing::{error, info, warn};
 
@@ -35,42 +34,53 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
     let read_stream = write_stream.try_clone()?;
     let mut stream_reader = BufReader::new(read_stream);
 
-    // Target node might be slow in responding to VERSION message
-    let response1 = if let Ok(net_msg) = tokio::time::timeout(
-        Duration::from_secs(timeout),
-        future::ready(message::RawNetworkMessage::consensus_decode(
-            &mut stream_reader,
-        )?),
-    )
-    .await
-    {
-        net_msg
-    } else {
-        return Err(CustomError(format!(
-            "TIMEOUT: {} failed to respond to VERSION message within {} seconds",
-            to_address, timeout
-        )));
-    };
+    // The target node almost always responds correctly to a VERSION message; however, a successful response can
+    // sometimes be delayed by over 2 minutes.
+    // Wrapping the call to message::RawNetworkMessage::consensus_decode() inside a future::ready() then placing that
+    // inside a call to tokio::time::timeout() does not trap a delayed response
+    let then = SystemTime::now();
+    let response1 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
+    let decode_millis = SystemTime::now().duration_since(then).unwrap().as_millis();
 
-    // What did we get back?
+    // Report decode times that exceed the timeout
+    if decode_millis > (timeout * 1000) as u128 {
+        warn!("Message decoding took {} ms", decode_millis);
+    }
+    // let response1 = if let Ok(net_msg) = tokio::time::timeout(
+    //     Duration::from_secs(timeout),
+    //     future::ready(message::RawNetworkMessage::consensus_decode(
+    //         &mut stream_reader,
+    //     )?),
+    // )
+    // .await
+    // {
+    //     net_msg
+    // } else {
+    //     return Err(CustomError(format!(
+    //         "TIMEOUT: {} failed to respond with VERSION message within {} seconds",
+    //         to_address, timeout
+    //     )));
+    // };
+
+    // I can haz version message?
     match response1.payload() {
-        message::NetworkMessage::Version(some_version) => {
-            // Does the target node understand?
-            if some_version.version < PROTOCOL_VERSION {
+        // Is the target node compatible with our version?
+        message::NetworkMessage::Version(some_ver_msg) => {
+            if some_ver_msg.version < PROTOCOL_VERSION {
                 error!(
-                    "VERSION mismatch: Target node at version {}.  Expected version >= {}",
-                    some_version.version, PROTOCOL_VERSION
+                    "VERSION mismatch: Target node version {} too low.  Needs to be >= {}",
+                    some_ver_msg.version, PROTOCOL_VERSION
                 )
             } else {
                 info!(
                     "VERSION: Target node accepts messages up to version {}",
-                    some_version.version
+                    some_ver_msg.version
                 );
             }
         }
 
+        // If we get an early verack, then throw toys out of pram
         message::NetworkMessage::Verack => {
-            // If we get an early verack, then throw toys out of pram
             return Err(CustomError(PROTOCOL_VIOLATION_UNEXPECTED_VERACK.to_owned()));
         }
 
@@ -89,7 +99,7 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
 
     let response2 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
 
-    // What did we get back?
+    // I can haz verack message?
     match response2.payload() {
         message::NetworkMessage::Verack => info!("VERACK received"),
 
