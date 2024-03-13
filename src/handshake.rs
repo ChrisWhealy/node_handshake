@@ -4,7 +4,6 @@ pub mod send_message;
 use crate::{
     dns_name_resolver::*, error::Result, handshake::bitcoin::shake_my_hand, DEFAULT_SEED_NODES,
 };
-use futures::StreamExt;
 use std::time::Duration;
 use tracing::{error, info};
 

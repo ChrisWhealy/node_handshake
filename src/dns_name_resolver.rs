@@ -1,6 +1,4 @@
 use std::net::IpAddr;
-
-use futures::{future, stream::LocalBoxStream, StreamExt};
 use hickory_resolver::{
     lookup_ip::LookupIp,
     {config::*, TokioAsyncResolver},
