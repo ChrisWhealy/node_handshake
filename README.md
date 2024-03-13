@@ -29,7 +29,7 @@ Pick a publicly available P2P node (e.g. a blockchain one) implementation - whic
 ## Usage
 
 ```shell
-$ cargo run <dns_seed_name> Optional<port number> Optional<timeout in secs>
+$ cargo run <dns_seed_name> <port number> <timeout in secs>
 ```
 
 Suggested DNS seed names include:
