@@ -25,3 +25,45 @@ Pick a publicly available P2P node (e.g. a blockchain one) implementation - whic
 - **Minimalism**: any number of dependencies can be used, but they should be tailored to the task.
 - **Versatility**: the more broadly applicable the solution is (bi-directional, unfixed values, etc.), the better.
 - **Uniqueness**: bonus points for non-Bitcoin implementations.
+
+## Usage
+
+```shell
+$ cargo run <dns_seed_name> Optional<port number> Optional<timeout in secs>
+```
+
+Suggested DNS seed names include:
+
+* `mx.jamestrev.com`
+* `mail.saxrag.com`
+* `seed.btc.petertodd.org`
+* `seed.bitcoin.sipa.be`
+* `dnsseed.bluematt.me`
+* `seed.bitcoinstats.com`
+* `seed.bitcoin.jonasschnelli.ch`
+
+If a port number is not supplied, the default is `8333`.
+
+If a timeout is not supplied, the default is 5 seconds.
+
+## Possible Output
+
+The supplied DNS name will, mostly likely, resolve to multiple IP addresses.
+However, the availability of a responsive P2P node at each of these IP addresses is uncertain; therefore each time you run this program against the same DNS seed node, you may receive differing results.
+
+```shell
+$ cargo run mx.jamestrev.com
+    Finished dev [unoptimized + debuginfo] target(s) in 0.41s
+     Running `target/debug/node-handshake mx.jamestrev.com`
+2024-03-13T12:01:39.868791Z  INFO node_handshake::dns_name_resolver: mx.jamestrev.com resolves to 1 IP address
+
+2024-03-13T12:01:39.868845Z  INFO node_handshake::handshake: Attempting handshake with 217.169.14.90:8333
+2024-03-13T12:01:39.868858Z  INFO node_handshake::handshake::bitcoin: Connecting to 217.169.14.90:8333
+2024-03-13T12:01:39.895768Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 217.169.14.90:8333
+2024-03-13T12:01:39.895825Z  INFO node_handshake::handshake::send_message: VERSION: Sent
+2024-03-13T12:01:39.927494Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
+2024-03-13T12:01:39.927528Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 217.169.14.90:8333
+2024-03-13T12:01:39.927561Z  INFO node_handshake::handshake::send_message: VERACK: Sent
+2024-03-13T12:01:39.927600Z  INFO node_handshake::handshake::bitcoin: VERACK received
+2024-03-13T12:01:39.927628Z  INFO node_handshake::handshake: Handshake with 217.169.14.90:8333 succeeded
+```
