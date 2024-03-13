@@ -1,110 +1,82 @@
 use bitcoin::{
-    consensus::{encode, Decodable},
+    consensus::Decodable,
     p2p::message::{self},
 };
 use std::{
-    io::{BufReader, Write},
+    io::BufReader,
     net::{IpAddr, SocketAddr, TcpStream},
 };
-use tracing::{error, info, warn};
+use tracing::{info, warn};
 
 use crate::{
     error::Result,
-    handshake::{PORT_BITCOIN, TIMEOUT},
-    messages::{verack::verack_msg, version::version_msg, PROTOCOL_VERSION},
+    handshake::{
+        send_message::{send_msg_verack, send_msg_version},
+        PORT_BITCOIN, TIMEOUT,
+    },
+    messages::PROTOCOL_VERSION,
+    Error::CustomError,
 };
+
+static PROTOCOL_VIOLATION_UNEXPECTED_VERACK: &str =
+    "Protocol violation: Target node sent VERACK before VERSION message";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
-    let mut msg_count: u8 = 0;
     let target_node = SocketAddr::new(to_address, PORT_BITCOIN);
-    let ver_msg_payload = version_msg(target_node);
 
     info!("Connecting to {}:{}", to_address, PORT_BITCOIN);
     let mut write_stream = TcpStream::connect_timeout(&target_node, TIMEOUT)?;
 
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Build and send version message
-    let ver_msg =
-        message::RawNetworkMessage::new(bitcoin::Network::Bitcoin.magic(), ver_msg_payload);
-    let msg_bytes = encode::serialize(&ver_msg);
-
-    info!(
-        "Version Message: Sending version {} ({} bytes) to target node {}",
-        PROTOCOL_VERSION,
-        msg_bytes.len(),
-        to_address
-    );
-    write_stream.write_all(&msg_bytes)?;
-    msg_count += 1;
-    info!("Version Message: Sent");
+    send_msg_version(&target_node, &mut write_stream)?;
 
     let read_stream = write_stream.try_clone()?;
     let mut stream_reader = BufReader::new(read_stream);
+    let response1 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
 
-    // The protocol should be two-step receive loop
-    loop {
-        let some_response = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
-
-        // What did we get back?
-        match some_response.payload() {
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Target node responded with its version number
-            message::NetworkMessage::Version(some_version) => {
-                if some_version.version != PROTOCOL_VERSION {
-                    let comparator = if some_version.version < PROTOCOL_VERSION {
-                        "lower"
-                    } else {
-                        "higher"
-                    };
-                    warn!(
-                        "Target node responded with {} version number {}",
-                        comparator, some_version.version
-                    )
-                } else {
-                    info!("Target node agreed on message version");
-                }
-
-                // Acknowledge target node's version message
-                let verack_msg_bytes = verack_msg();
-                let msg_bytes = encode::serialize(&verack_msg_bytes);
-
-                info!(
-                    "Version Acknowledgement Message: Sending {} bytes to {}",
-                    msg_bytes.len(),
-                    to_address
-                );
-                write_stream.write_all(&msg_bytes)?;
-                msg_count += 1;
-                info!("Version Acknowledgement Message: Sent");
-            }
-
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Target node confirms version acknowledgement
-            message::NetworkMessage::Verack => {
-                // Did we get an early verack?
-                if msg_count != 2 {
-                    error!("Protocol violation: Target node sent VERACK before VERSION message");
-                } else {
-                    info!("Target node acknowledges version number");
-                }
-
-                break;
-            }
-
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Target node respond with some other message
-            _ => {
-                if msg_count == 2 {
-                    info!(
-                        "Protocol violation (non-fatal): Expected VERACK, instead got {:?}",
-                        some_response.payload()
-                    );
-                } else {
-                    error!("Received unknown message {:?}", some_response.payload());
-                }
-                break;
+    // What did we get back?
+    match response1.payload() {
+        message::NetworkMessage::Version(some_version) => {
+            // Are we agreed on the message version?
+            if some_version.version != PROTOCOL_VERSION {
+                warn!(
+                    "VERSION mismatch: Target node at {}, expected {}",
+                    some_version.version, PROTOCOL_VERSION
+                )
+            } else {
+                info!("VERSION: Target node agreed on message version");
             }
         }
+
+        message::NetworkMessage::Verack => {
+            // If we get an early verack, then throw toys out of pram
+            return Err(CustomError(PROTOCOL_VIOLATION_UNEXPECTED_VERACK.to_owned()));
+        }
+
+        _ => {
+            warn!(
+                "Protocol violation (non-fatal): Expected VERSION, instead got {:?}",
+                response1.payload()
+            );
+        }
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Respond to target node's version message with a VERACK
+    send_msg_verack(&target_node, &mut write_stream)?;
+
+    let response2 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
+
+    // What did we get back?
+    match response2.payload() {
+        message::NetworkMessage::Verack => info!("VERACK received"),
+
+        _ => warn!(
+            "Protocol violation (non-fatal): Expected VERACK, instead got {:?}",
+            response2.payload()
+        ),
     }
 
     write_stream.shutdown(std::net::Shutdown::Both)?;
@@ -117,6 +89,7 @@ pub async fn shake_my_hand(to_address: IpAddr) -> Result<()> {
 mod tests {
     use super::*;
     use std::net::{IpAddr, Ipv4Addr};
+    use tracing::error;
 
     #[tokio::test]
     async fn should_perform_handshake_to_single_target_node() {

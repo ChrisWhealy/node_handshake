@@ -1,4 +1,5 @@
 pub mod bitcoin;
+pub mod send_message;
 
 use crate::{
     dns_name_resolver::*, error::Result, handshake::bitcoin::shake_my_hand, DEFAULT_SEED_NODES,
@@ -17,16 +18,14 @@ pub async fn start_handshakes() -> Result<()> {
     tracing::info!("Resolving DNS names");
     let resolved_names = name_resolver.resolve_names().await;
 
-    resolved_names
-        .for_each_concurrent(None, |address| async move {
-            info!("Attempting handshake with {:?}", address);
+    for address in resolved_names {
+        info!("Attempting handshake with {:?}:{}", address, PORT_BITCOIN);
 
-            match shake_my_hand(address).await {
-                Ok(_) => info!("Handshake with {:?} succeeded\n", address),
-                Err(e) => error!("Handshake with {:?} failed: {}\n", address, e),
-            }
-        })
-        .await;
+        match shake_my_hand(address).await {
+            Ok(_) => info!("Handshake with {:?} succeeded\n", address),
+            Err(e) => error!("Handshake with {:?} failed: {}\n", address, e),
+        }
+    }
 
     Ok(())
 }
