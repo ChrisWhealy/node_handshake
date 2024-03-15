@@ -1,4 +1,7 @@
-use bitcoin::{consensus::encode, p2p::{PROTOCOL_VERSION, message}};
+use bitcoin::{
+    consensus::encode,
+    p2p::{message, PROTOCOL_VERSION},
+};
 use std::{
     io::Write,
     net::{SocketAddr, TcpStream},
@@ -17,13 +20,13 @@ pub fn send_msg_version(target_node: &SocketAddr, write_stream: &mut TcpStream) 
     let msg_bytes = encode::serialize(&msg);
 
     info!(
-        "VERSION: Sending {} ({} bytes) to target node {}",
+        "version: Sending {} ({} bytes) to target node {}",
         PROTOCOL_VERSION,
         msg_bytes.len(),
         target_node
     );
     write_stream.write_all(&msg_bytes)?;
-    info!("VERSION: Sent");
+    info!("version: Sent");
 
     Ok(())
 }
@@ -35,12 +38,12 @@ pub fn send_msg_verack(target_node: &SocketAddr, write_stream: &mut TcpStream) -
     let msg_bytes = encode::serialize(&msg);
 
     info!(
-        "VERACK: Sending {} bytes to {}",
+        "verack: Sending {} bytes to {}",
         msg_bytes.len(),
         target_node
     );
     write_stream.write_all(&msg_bytes)?;
-    info!("VERACK: Sent");
+    info!("verack: Sent");
 
     Ok(())
 }
