@@ -34,8 +34,10 @@ $ cargo run <dns_seed_name> <port number> <timeout in secs>
 
 Suggested DNS seed names include:
 
-* `mx.jamestrev.com`
+* ` mx.jamestrev.com`
 * `mail.saxrag.com`
+* `showy-toys.aeza.network`
+* `nickjlock.plus.com`
 * `seed.btc.petertodd.org`
 * `seed.bitcoin.sipa.be`
 * `dnsseed.bluematt.me`
