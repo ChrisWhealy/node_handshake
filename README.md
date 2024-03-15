@@ -34,7 +34,7 @@ $ cargo run <dns_seed_name> <port number> <timeout in secs>
 
 Suggested DNS seed names include:
 
-* ` mx.jamestrev.com`
+* `mx.jamestrev.com`
 * `mail.saxrag.com`
 * `showy-toys.aeza.network`
 * `nickjlock.plus.com`
@@ -97,10 +97,8 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 
 ## Testing
 
-A test run is available in `main.rs` that attempts to handshake with a set preconfigured DNS seed nodes.
-
-However, since the results returned by a P2P handshake are entirely variable, it is not possible to use `assert!()` to check for an expected result.
-Hence, this is not a `#[test]` in the traditional Rust sense.
+There is an integration test that runs against a set of DNS Seen Node names that in total, resolve to around 100 IP addresses.
+However, since the results returned by a P2P handshake are entirely variable, it is not possible to `assert!()` that any particular value should or should not be received.
 
 To see the output of this test run, you must tell `cargo test` not to capture IO written to `stdout`:
 
