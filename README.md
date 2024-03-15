@@ -54,18 +54,46 @@ However, the availability of a responsive P2P node at each of these IP addresses
 
 ```shell
 $ export RUST_LOG=info
-$ cargo run mx.jamestrev.com
-    Finished dev [unoptimized + debuginfo] target(s) in 0.41s
-     Running `target/debug/node-handshake mx.jamestrev.com`
-2024-03-13T12:01:39.868791Z  INFO node_handshake::dns_name_resolver: mx.jamestrev.com resolves to 1 IP address
+$ cargo run seed.bitcoin.jonasschnelli.ch
+   Compiling node-handshake v0.1.0 (/Users/chris/Developer/Eiger/node-handshake)
+    Finished dev [unoptimized + debuginfo] target(s) in 3.12s
+     Running `target/debug/node-handshake seed.bitcoin.jonasschnelli.ch`
+2024-03-15T09:04:43.726311Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
 
-2024-03-13T12:01:39.868845Z  INFO node_handshake::handshake: Attempting handshake with 217.169.14.90:8333
-2024-03-13T12:01:39.868858Z  INFO node_handshake::handshake::bitcoin: Connecting to 217.169.14.90:8333
-2024-03-13T12:01:39.895768Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 217.169.14.90:8333
-2024-03-13T12:01:39.895825Z  INFO node_handshake::handshake::send_message: VERSION: Sent
-2024-03-13T12:01:39.927494Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
-2024-03-13T12:01:39.927528Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 217.169.14.90:8333
-2024-03-13T12:01:39.927561Z  INFO node_handshake::handshake::send_message: VERACK: Sent
-2024-03-13T12:01:39.927600Z  INFO node_handshake::handshake::bitcoin: VERACK received
-2024-03-13T12:01:39.927628Z  INFO node_handshake::handshake: Handshake with 217.169.14.90:8333 succeeded
+2024-03-15T09:04:43.726417Z  INFO node_handshake::handshake: Attempting handshake with 209.177.138.245:8333
+2024-03-15T09:04:43.726446Z  INFO node_handshake::handshake::bitcoin: Connecting to 209.177.138.245:8333
+2024-03-15T09:04:43.947861Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 209.177.138.245:8333
+2024-03-15T09:04:43.947985Z  INFO node_handshake::handshake::send_message: VERSION: Sent
+2024-03-15T09:04:44.180276Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
+2024-03-15T09:04:44.180375Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 209.177.138.245:8333
+2024-03-15T09:04:44.180476Z  INFO node_handshake::handshake::send_message: VERACK: Sent
+2024-03-15T09:04:44.180547Z  INFO node_handshake::handshake::bitcoin: VERACK received
+2024-03-15T09:04:44.180652Z  INFO node_handshake::handshake: Handshake with 209.177.138.245:8333 succeeded
+
+2024-03-15T09:04:44.180681Z  INFO node_handshake::handshake: Attempting handshake with 45.44.213.123:8333
+2024-03-15T09:04:44.180698Z  INFO node_handshake::handshake::bitcoin: Connecting to 45.44.213.123:8333
+2024-03-15T09:04:44.295680Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 45.44.213.123:8333
+2024-03-15T09:04:44.295782Z  INFO node_handshake::handshake::send_message: VERSION: Sent
+2024-03-15T09:05:04.137053Z  WARN node_handshake::handshake::bitcoin: VERSION: Message took 19841 ms to arrive
+2024-03-15T09:05:04.137094Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
+2024-03-15T09:05:04.137131Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 45.44.213.123:8333
+2024-03-15T09:05:04.137219Z  INFO node_handshake::handshake::send_message: VERACK: Sent
+2024-03-15T09:05:04.137261Z  INFO node_handshake::handshake::bitcoin: VERACK received
+2024-03-15T09:05:04.137320Z  INFO node_handshake::handshake: Handshake with 45.44.213.123:8333 succeeded
+
+2024-03-15T09:05:04.137339Z  INFO node_handshake::handshake: Attempting handshake with 114.216.118.251:8333
+2024-03-15T09:05:04.137351Z  INFO node_handshake::handshake::bitcoin: Connecting to 114.216.118.251:8333
+2024-03-15T09:05:04.398325Z ERROR node_handshake::handshake: Handshake with 114.216.118.251:8333 failed: IO ERROR: Connection refused (os error 61)
+
+2024-03-15T09:05:04.399417Z  INFO node_handshake::handshake: Attempting handshake with 92.249.179.185:8333
+2024-03-15T09:05:04.399439Z  INFO node_handshake::handshake::bitcoin: Connecting to 92.249.179.185:8333
+2024-03-15T09:05:04.627841Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 92.249.179.185:8333
+2024-03-15T09:05:04.628000Z  INFO node_handshake::handshake::send_message: VERSION: Sent
+2024-03-15T09:05:04.673873Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
+2024-03-15T09:05:04.673935Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 92.249.179.185:8333
+2024-03-15T09:05:04.674000Z  INFO node_handshake::handshake::send_message: VERACK: Sent
+2024-03-15T09:05:04.674041Z  INFO node_handshake::handshake::bitcoin: VERACK received
+2024-03-15T09:05:04.674095Z  INFO node_handshake::handshake: Handshake with 92.249.179.185:8333 succeeded
+
+...
 ```
