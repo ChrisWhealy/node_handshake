@@ -36,8 +36,9 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
 
     // The target node almost always responds correctly to a VERSION message; however, a successful response can
     // sometimes be delayed by over 2 minutes.
-    // Wrapping the call to message::RawNetworkMessage::consensus_decode() inside a future::ready() then placing that
-    // inside a call to tokio::time::timeout() does not trap a delayed response
+    // A solution has been suggested here https://stackoverflow.com/questions/78156419/
+    // However, the proposed solution brings another problem that since the closure may outlive the parent function, the
+    // mutable shared reference to the stream reader cannot be used within the closure
     let then = SystemTime::now();
     let response1 = message::RawNetworkMessage::consensus_decode(&mut stream_reader)?;
     let decode_millis = SystemTime::now().duration_since(then).unwrap().as_millis();
@@ -46,20 +47,41 @@ pub async fn shake_my_hand(to_address: IpAddr, port: u16, timeout: u64) -> Resul
     if decode_millis > (timeout * 1000) as u128 {
         warn!("Message decoding took {} ms", decode_millis);
     }
-    // let response1 = if let Ok(net_msg) = tokio::time::timeout(
+
+    // let response1 = match tokio::time::timeout(
     //     Duration::from_secs(timeout),
-    //     future::ready(message::RawNetworkMessage::consensus_decode(
-    //         &mut stream_reader,
-    //     )?),
+    //     tokio::task::spawn_blocking(
+    //         || -> std::result::Result<RawNetworkMessage, crate::error::Error> {
+    //             match message::RawNetworkMessage::consensus_decode(&mut stream_reader) {
+    //                 Ok(thing) => Ok(thing),
+    //                 Err(e) => Err(crate::error::Error::Encode(e)),
+    //             }
+    //         },
+    //     ),
     // )
     // .await
     // {
-    //     net_msg
-    // } else {
-    //     return Err(CustomError(format!(
-    //         "TIMEOUT: {} failed to respond with VERSION message within {} seconds",
-    //         to_address, timeout
-    //     )));
+    //     // Response obtained within timeout period
+    //     Ok(thing) => match thing {
+    //         Ok(maybe_net_msg) => match maybe_net_msg {
+    //             Ok(net_msg) => net_msg,
+    //             Err(e) => return Err(e),
+    //         },
+    //         Err(e) => {
+    //             return Err(CustomError(format!(
+    //                 "TCP READ STREAM: Unable to complete reading from {} ({})",
+    //                 to_address, e
+    //             )));
+    //         }
+    //     },
+
+    //     // Timeout exceeded
+    //     Err(_e) => {
+    //         return Err(CustomError(format!(
+    //             "TIMEOUT: {} failed to respond with VERSION message within {} seconds",
+    //             to_address, timeout
+    //         )));
+    //     }
     // };
 
     // I can haz version message?
