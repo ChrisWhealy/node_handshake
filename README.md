@@ -44,56 +44,53 @@ Suggested DNS seed names include:
 
 If a port number is not supplied, the default is `8333`.
 
-If a timeout is not supplied, the default is 5 seconds.
-This timeout value applies to all network requests including DNS name resolution.
+If a timeout is not supplied, the default network request timeout is 5 seconds.
 
 ## Possible Output
 
 The supplied DNS name will, mostly likely, resolve to multiple IP addresses.
-However, the availability of a responsive P2P node at each of these IP addresses is uncertain; therefore each time you run this program against the same DNS seed node, you may receive differing results.
+However, the availability of a responsive P2P node at each of these IP addresses is uncertain; therefore each time you run this program against the same DNS seed node, it is very likely that you will receive differing results.
 
 ```shell
 $ export RUST_LOG=info
 $ cargo run seed.bitcoin.jonasschnelli.ch
    Compiling node-handshake v0.1.0 (/Users/chris/Developer/Eiger/node-handshake)
-    Finished dev [unoptimized + debuginfo] target(s) in 3.12s
+    Finished dev [unoptimized + debuginfo] target(s) in 1.32s
      Running `target/debug/node-handshake seed.bitcoin.jonasschnelli.ch`
-2024-03-15T09:04:43.726311Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
+2024-03-15T14:46:46.035849Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
 
-2024-03-15T09:04:43.726417Z  INFO node_handshake::handshake: Attempting handshake with 209.177.138.245:8333
-2024-03-15T09:04:43.726446Z  INFO node_handshake::handshake::bitcoin: Connecting to 209.177.138.245:8333
-2024-03-15T09:04:43.947861Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 209.177.138.245:8333
-2024-03-15T09:04:43.947985Z  INFO node_handshake::handshake::send_message: VERSION: Sent
-2024-03-15T09:04:44.180276Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
-2024-03-15T09:04:44.180375Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 209.177.138.245:8333
-2024-03-15T09:04:44.180476Z  INFO node_handshake::handshake::send_message: VERACK: Sent
-2024-03-15T09:04:44.180547Z  INFO node_handshake::handshake::bitcoin: VERACK received
-2024-03-15T09:04:44.180652Z  INFO node_handshake::handshake: Handshake with 209.177.138.245:8333 succeeded
+2024-03-15T14:46:46.036019Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> NOT STARTED
+2024-03-15T14:46:46.036054Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> STARTED
+2024-03-15T14:46:51.036891Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> FAILED: TCP connection timed out
 
-2024-03-15T09:04:44.180681Z  INFO node_handshake::handshake: Attempting handshake with 45.44.213.123:8333
-2024-03-15T09:04:44.180698Z  INFO node_handshake::handshake::bitcoin: Connecting to 45.44.213.123:8333
-2024-03-15T09:04:44.295680Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 45.44.213.123:8333
-2024-03-15T09:04:44.295782Z  INFO node_handshake::handshake::send_message: VERSION: Sent
-2024-03-15T09:05:04.137053Z  WARN node_handshake::handshake::bitcoin: VERSION: Message took 19841 ms to arrive
-2024-03-15T09:05:04.137094Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
-2024-03-15T09:05:04.137131Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 45.44.213.123:8333
-2024-03-15T09:05:04.137219Z  INFO node_handshake::handshake::send_message: VERACK: Sent
-2024-03-15T09:05:04.137261Z  INFO node_handshake::handshake::bitcoin: VERACK received
-2024-03-15T09:05:04.137320Z  INFO node_handshake::handshake: Handshake with 45.44.213.123:8333 succeeded
+2024-03-15T14:46:51.036940Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> NOT STARTED
+2024-03-15T14:46:51.036955Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> STARTED
+2024-03-15T14:46:56.037021Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> FAILED: TCP connection timed out
 
-2024-03-15T09:05:04.137339Z  INFO node_handshake::handshake: Attempting handshake with 114.216.118.251:8333
-2024-03-15T09:05:04.137351Z  INFO node_handshake::handshake::bitcoin: Connecting to 114.216.118.251:8333
-2024-03-15T09:05:04.398325Z ERROR node_handshake::handshake: Handshake with 114.216.118.251:8333 failed: IO ERROR: Connection refused (os error 61)
+2024-03-15T14:46:56.037065Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> NOT STARTED
+2024-03-15T14:46:56.037081Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> STARTED
+2024-03-15T14:46:56.197124Z  INFO node_handshake::handshake::send_message: version: Sending 70001 (127 bytes) to target node 143.110.147.13:8333
+2024-03-15T14:46:56.197289Z  INFO node_handshake::handshake::send_message: version: Sent
+2024-03-15T14:46:56.378334Z  INFO node_handshake::handshake::bitcoin: version: Target node accepts messages up to version 70015
+2024-03-15T14:46:56.378403Z  INFO node_handshake::handshake::send_message: verack: Sending 24 bytes to 143.110.147.13:8333
+2024-03-15T14:46:56.378458Z  INFO node_handshake::handshake::send_message: verack: Sent
+2024-03-15T14:46:56.378553Z  INFO node_handshake::handshake::bitcoin: verack received
+2024-03-15T14:46:56.378658Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> SUCCESS
 
-2024-03-15T09:05:04.399417Z  INFO node_handshake::handshake: Attempting handshake with 92.249.179.185:8333
-2024-03-15T09:05:04.399439Z  INFO node_handshake::handshake::bitcoin: Connecting to 92.249.179.185:8333
-2024-03-15T09:05:04.627841Z  INFO node_handshake::handshake::send_message: VERSION: Sending 70001 (127 bytes) to target node 92.249.179.185:8333
-2024-03-15T09:05:04.628000Z  INFO node_handshake::handshake::send_message: VERSION: Sent
-2024-03-15T09:05:04.673873Z  INFO node_handshake::handshake::bitcoin: VERSION: Target node accepts messages up to version 70016
-2024-03-15T09:05:04.673935Z  INFO node_handshake::handshake::send_message: VERACK: Sending 24 bytes to 92.249.179.185:8333
-2024-03-15T09:05:04.674000Z  INFO node_handshake::handshake::send_message: VERACK: Sent
-2024-03-15T09:05:04.674041Z  INFO node_handshake::handshake::bitcoin: VERACK received
-2024-03-15T09:05:04.674095Z  INFO node_handshake::handshake: Handshake with 92.249.179.185:8333 succeeded
+...snip...
+
+2024-03-15T14:47:44.498947Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> NOT STARTED
+2024-03-15T14:47:44.498961Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> STARTED
+2024-03-15T14:47:44.753985Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> FAILED: TCP Connection refused (os error 61)
+
+2024-03-15T14:47:44.754051Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> NOT STARTED
+2024-03-15T14:47:44.754074Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> STARTED
+2024-03-15T14:47:49.754653Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> FAILED: TCP connection timed out
+
+2024-03-15T14:47:49.754745Z  INFO node_handshake::handshake: Summary of handshakes to seed.bitcoin.jonasschnelli.ch
+2024-03-15T14:47:49.754769Z  INFO node_handshake::handshake:    Success = 11
+2024-03-15T14:47:49.754786Z  INFO node_handshake::handshake:    Partial = 0
+2024-03-15T14:47:49.754802Z  INFO node_handshake::handshake:    Failed  = 13
 
 ...
 ```
@@ -105,7 +102,7 @@ A test run is available in `main.rs` that attempts to handshake with a set preco
 However, since the results returned by a P2P handshake are entirely variable, it is not possible to use `assert!()` to check for an expected result.
 Hence, this is not a `#[test]` in the traditional Rust sense.
 
-To see the output of this test run, you must tell `cargo` not to capture IO written to `stdout`:
+To see the output of this test run, you must tell `cargo test` not to capture IO written to `stdout`:
 
 ```shell
 $ cargo test -- --nocapture
