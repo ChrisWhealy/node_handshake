@@ -97,3 +97,16 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 
 ...
 ```
+
+## Testing
+
+A test run is available in `main.rs` that attempts to handshake with a set preconfigured DNS seed nodes.
+
+However, since the results returned by a P2P handshake are entirely variable, it is not possible to use `assert!()` to check for an expected result.
+Hence, this is not a `#[test]` in the traditional Rust sense.
+
+To see the output of this test run, you must tell `cargo` not to capture IO written to `stdout`:
+
+```shell
+$ cargo test -- --nocapture
+```
