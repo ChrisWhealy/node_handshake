@@ -91,8 +91,6 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 2024-03-15T14:47:49.754769Z  INFO node_handshake::handshake:    Success = 11
 2024-03-15T14:47:49.754786Z  INFO node_handshake::handshake:    Partial = 0
 2024-03-15T14:47:49.754802Z  INFO node_handshake::handshake:    Failed  = 13
-
-...
 ```
 
 ## Testing
