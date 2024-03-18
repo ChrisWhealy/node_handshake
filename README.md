@@ -121,7 +121,7 @@ cargo run showy-toys.aeza.network
 
 ## Testing
 
-There is an integration test that runs against a set of DNS Seed Node names that in total, resolve to around 100 IP addresses.
+An integration test can be run against a set of DNS Seed Node names that in total, resolve to around 120 IP addresses.
 However, since the results returned by a P2P handshake are entirely variable, it is not possible to `assert!()` that any particular value should or should not be received.
 
 To see the output of this test run, you must tell `cargo test` not to capture IO written to `stdout`:
