@@ -61,7 +61,6 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 2024-03-18T15:13:47.213902Z  INFO node_handshake: Attempting handshake(s) with seed.bitcoin.jonasschnelli.ch:8333  Timeout = 5000 ms
 2024-03-18T15:13:47.287732Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
 
-2024-03-18T15:13:47.287825Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> NOT STARTED
 2024-03-18T15:13:47.287853Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> STARTED
 2024-03-18T15:13:47.336974Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 79.204.1.107:8333
 2024-03-18T15:13:47.337144Z  INFO node_handshake::handshake::btc_message: version: Sent
@@ -71,13 +70,11 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 2024-03-18T15:13:47.398562Z  WARN node_handshake::handshake::btc_message: Target node skipped verack.  Instead got Alert([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 255, 127, 254, 255, 255, 127, 1, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 255, 127, 0, 255, 255, 255, 127, 0, 47, 85, 82, 71, 69, 78, 84, 58, 32, 65, 108, 101, 114, 116, 32, 107, 101, 121, 32, 99, 111, 109, 112, 114, 111, 109, 105, 115, 101, 100, 44, 32, 117, 112, 103, 114, 97, 100, 101, 32, 114, 101, 113, 117, 105, 114, 101, 100, 0])
 2024-03-18T15:13:47.398643Z  WARN node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> PARTIAL
 
-2024-03-18T15:13:47.398659Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> NOT STARTED
 2024-03-18T15:13:47.398671Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> STARTED
 2024-03-18T15:13:52.399450Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> FAILED: TCP connection timed out
 
 ...snip...
 
-2024-03-18T15:14:12.404286Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> NOT STARTED
 2024-03-18T15:14:12.404300Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> STARTED
 2024-03-18T15:14:12.462803Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 37.60.239.26:8333
 2024-03-18T15:14:12.462905Z  INFO node_handshake::handshake::btc_message: version: Sent
@@ -87,7 +84,6 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 2024-03-18T15:14:12.486083Z  INFO node_handshake::handshake::btc_message: verack received
 2024-03-18T15:14:12.486148Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> SUCCESS
 
-2024-03-18T15:14:12.486163Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.225.80) -> NOT STARTED
 2024-03-18T15:14:12.486174Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.225.80) -> STARTED
 2024-03-18T15:14:12.511101Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 37.60.225.80:8333
 2024-03-18T15:14:12.511195Z  INFO node_handshake::handshake::btc_message: version: Sent

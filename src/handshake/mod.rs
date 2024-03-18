@@ -36,7 +36,6 @@ pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout: Duratio
         for ip_addr in ip_address_list {
             let mut this_handshake =
                 BitcoinHandshake::new(dns_seed_node.clone(), ip_addr, port, timeout);
-            info!("{}", this_handshake);
 
             match shake_my_hand(&mut this_handshake, timeout).await {
                 Ok(_) => {
