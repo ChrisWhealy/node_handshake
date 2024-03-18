@@ -61,7 +61,7 @@ pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout_millis: 
         info!("   Partial = {}", count_partial,);
         info!("   Failed  = {}\n", count_failure);
     } else {
-        error!("Unable to start hand shakes");
+        error!("Unable to start hand shakes\n");
     };
 
     Ok(())
