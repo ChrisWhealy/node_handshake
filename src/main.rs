@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, time::Duration};
 
 use clap::Parser;
 use node_handshake::{
@@ -23,7 +23,7 @@ impl Display for SeedArgs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Attempting handshakes with {}:{}  Timeout = {} ms",
+            "Attempting handshake(s) with {}:{}  Timeout = {} ms",
             self.dns_seed_name, self.port, self.timeout
         )
     }
@@ -36,5 +36,10 @@ async fn main() -> Result<()> {
     let args = SeedArgs::parse();
     info!("{}", args);
 
-    start_handshakes(args.dns_seed_name, args.port, args.timeout).await
+    start_handshakes(
+        args.dns_seed_name,
+        args.port,
+        Duration::from_millis(args.timeout),
+    )
+    .await
 }

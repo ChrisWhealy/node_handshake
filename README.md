@@ -58,7 +58,7 @@ $ export RUST_LOG=info
 $ cargo run seed.bitcoin.jonasschnelli.ch
     Finished dev [unoptimized + debuginfo] target(s) in 0.12s
      Running `target/debug/node-handshake seed.bitcoin.jonasschnelli.ch`
-2024-03-18T15:13:47.213902Z  INFO node_handshake: Attempting handshakes with seed.bitcoin.jonasschnelli.ch:8333  Timeout = 5000 ms
+2024-03-18T15:13:47.213902Z  INFO node_handshake: Attempting handshake(s) with seed.bitcoin.jonasschnelli.ch:8333  Timeout = 5000 ms
 2024-03-18T15:13:47.287732Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
 
 2024-03-18T15:13:47.287825Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> NOT STARTED
@@ -99,10 +99,24 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 
 ...snip...
 
-2024-03-18T15:14:47.318848Z  INFO node_handshake::handshake: Summary of handshakes to seed.bitcoin.jonasschnelli.ch
+2024-03-18T15:14:47.318848Z  INFO node_handshake::handshake: Summary of handshakes with seed.bitcoin.jonasschnelli.ch
 2024-03-18T15:14:47.318889Z  INFO node_handshake::handshake:    Success = 2
 2024-03-18T15:14:47.318908Z  INFO node_handshake::handshake:    Partial = 9
 2024-03-18T15:14:47.318925Z  INFO node_handshake::handshake:    Failed  = 13
+```
+
+## Error States
+
+If DNS is unable to resolve the name of a seed node, you will see output similar to the following:
+
+```shell
+cargo run showy-toys.aeza.network
+   Compiling node-handshake v0.1.0 (/Users/chris/Developer/Eiger/node-handshake)
+    Finished dev [unoptimized + debuginfo] target(s) in 1.43s
+     Running `target/debug/node-handshake showy-toys.aeza.network`
+2024-03-18T15:24:31.936206Z  INFO node_handshake: Attempting handshake(s) with showy-toys.aeza.network:8333  Timeout = 5000 ms
+2024-03-18T15:24:32.460327Z ERROR node_handshake::dns_name_resolver: DNS Name resolution error: no record found for Query { name: Name("showy-toys.aeza.network."), query_type: AAAA, query_class: IN }
+2024-03-18T15:24:32.460397Z ERROR node_handshake::handshake: Hand shake(s) with showy-toys.aeza.network not possible
 ```
 
 ## Testing

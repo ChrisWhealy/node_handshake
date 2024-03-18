@@ -24,6 +24,7 @@ use std::{
 use tracing::{info, warn};
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Send a generic BitCoin network message
 fn send_msg(
     payload: message::NetworkMessage,
     target_node: &SocketAddr,
@@ -46,7 +47,10 @@ fn send_msg(
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// Wait for remote node to say something
+// Wait for the remote node to respond with a BitCoin message
+// This function is impatient and will mark a handshake as having failed if the response takes longer than the timeout
+// period.  This is in spite of the fact had we waited long enough, the target node may well have responsed with a
+// success message
 pub async fn receive_msg(
     write_stream: &mut TcpStream,
     handshake: &mut BitcoinHandshake,
@@ -54,10 +58,8 @@ pub async fn receive_msg(
 ) -> std::result::Result<RawNetworkMessage, crate::error::Error> {
     let read_stream = write_stream.try_clone()?;
 
-    // Mark a handshake as failed if the response takes longer than the timeout period.  This is in spite of the fact
-    // had we waited long enough, the target node may well have responsed successfully
     let maybe_raw_net_msg = tokio::time::timeout(
-        handshake.timeout_millis,
+        handshake.timeout,
         tokio::task::spawn_blocking(move || {
             let mut stream_reader = BufReader::new(read_stream);
             message::RawNetworkMessage::consensus_decode(&mut stream_reader)
@@ -65,6 +67,7 @@ pub async fn receive_msg(
     )
     .await;
 
+    // Meh, the data is delivered in a triple nested Result...
     let raw_net_msg = match maybe_raw_net_msg {
         // Got a success response within the timeout period
         Ok(Ok(Ok(raw_net_msg))) => raw_net_msg,

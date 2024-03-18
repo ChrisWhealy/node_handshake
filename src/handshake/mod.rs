@@ -25,18 +25,17 @@ const PROTOCOL_VIOLATION_UNEXPECTED_VERACK: &str =
     "Fatal Protocol Violation: Target node sent verack before version message";
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout_millis: u64) -> Result<()> {
+pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout: Duration) -> Result<()> {
     let mut count_success: u16 = 0;
     let mut count_partial: u16 = 0;
     let mut count_failure: u16 = 0;
-    let timeout = Duration::from_millis(timeout_millis);
 
     let name_resolver = DnsNameResolver::new(dns_seed_node.clone(), timeout);
 
     if let Some(ip_address_list) = name_resolver.resolve_names().await {
         for ip_addr in ip_address_list {
             let mut this_handshake =
-                BitcoinHandshake::new(dns_seed_node.clone(), ip_addr, port, Some(timeout));
+                BitcoinHandshake::new(dns_seed_node.clone(), ip_addr, port, timeout);
             info!("{}", this_handshake);
 
             match shake_my_hand(&mut this_handshake, timeout).await {
@@ -56,12 +55,12 @@ pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout_millis: 
             }
         }
 
-        info!("Summary of handshakes to {}", dns_seed_node);
+        info!("Summary of handshake(s) with {}", dns_seed_node);
         info!("   Success = {}", count_success);
         info!("   Partial = {}", count_partial,);
         info!("   Failed  = {}\n", count_failure);
     } else {
-        error!("Unable to start hand shakes\n");
+        error!("Hand shake(s) with {} not possible\n", dns_seed_node);
     };
 
     Ok(())

@@ -18,11 +18,6 @@ async fn tests_multiple_dns_seed_nodes() {
     tracing_subscriber::fmt::init();
 
     for node in TEST_NODES {
-        let _ = start_handshakes(
-            node.to_owned(),
-            PORT_BITCOIN,
-            FIVE_SECONDS.as_millis() as u64,
-        )
-        .await;
+        let _ = start_handshakes(node.to_owned(), PORT_BITCOIN, FIVE_SECONDS).await;
     }
 }
