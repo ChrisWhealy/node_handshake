@@ -2,6 +2,11 @@
 name = "node-handshake"
 version = "0.1.0"
 edition = "2021"
+authors = ["Chris Whealy <chris@whealy.com>"]
+license = "MIT"
+readme = "README.md"
+description = "PoC app that performs a BitCoin P2P node handshake"
+repository = "https://github.com/ChrisWhealy/node_handshake"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -67,7 +67,7 @@ pub async fn receive_msg(
     )
     .await;
 
-    // Meh, the data is delivered in a triple nested Result...
+    // Unpack the triple nested Result...
     let raw_net_msg = match maybe_raw_net_msg {
         // Got a success response within the timeout period
         Ok(Ok(Ok(raw_net_msg))) => raw_net_msg,
