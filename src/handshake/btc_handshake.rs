@@ -1,4 +1,6 @@
-use std::{fmt::Display, net::IpAddr};
+use std::{fmt::Display, net::IpAddr, time::Duration};
+
+use super::FIVE_SECONDS;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #[derive(PartialEq)]
@@ -30,15 +32,26 @@ pub struct BitcoinHandshake {
     pub ip_addr: IpAddr,
     pub port: u16,
     pub state: BitcoinHandshakeState,
+    pub timeout_millis: Duration,
 }
 
 impl BitcoinHandshake {
-    pub fn new(dns_name: String, ip_addr: IpAddr, port: u16) -> BitcoinHandshake {
+    pub fn new(
+        dns_name: String,
+        ip_addr: IpAddr,
+        port: u16,
+        timeout_millis: Option<Duration>,
+    ) -> BitcoinHandshake {
         BitcoinHandshake {
             dns_name,
             ip_addr,
             port,
             state: BitcoinHandshakeState::NotStarted,
+            timeout_millis: if let Some(duration) = timeout_millis {
+                duration
+            } else {
+                FIVE_SECONDS
+            },
         }
     }
 }
