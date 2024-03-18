@@ -105,7 +105,7 @@ $ cargo run seed.bitcoin.jonasschnelli.ch
 2024-03-18T15:14:47.318925Z  INFO node_handshake::handshake:    Failed  = 13
 ```
 
-## Error States
+## DNS Name Resolution Failure
 
 If DNS is unable to resolve the name of a seed node, you will see output similar to the following:
 
@@ -121,7 +121,7 @@ cargo run showy-toys.aeza.network
 
 ## Testing
 
-There is an integration test that runs against a set of DNS Seen Node names that in total, resolve to around 100 IP addresses.
+There is an integration test that runs against a set of DNS Seed Node names that in total, resolve to around 100 IP addresses.
 However, since the results returned by a P2P handshake are entirely variable, it is not possible to `assert!()` that any particular value should or should not be received.
 
 To see the output of this test run, you must tell `cargo test` not to capture IO written to `stdout`:
