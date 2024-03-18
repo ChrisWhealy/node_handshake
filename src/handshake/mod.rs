@@ -43,11 +43,11 @@ pub async fn start_handshakes(dns_seed_node: String, port: u16, timeout_millis: 
                 Ok(_) => {
                     if this_handshake.state == BitcoinHandshakeState::Success {
                         count_success += 1;
+                        info!("{}\n", this_handshake.short_txt())
                     } else {
                         count_partial += 1;
+                        warn!("{}\n", this_handshake.short_txt())
                     }
-
-                    info!("{}\n", this_handshake)
                 }
                 Err(_) => {
                     count_failure += 1;

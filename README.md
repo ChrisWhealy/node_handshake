@@ -29,7 +29,7 @@ Pick a publicly available P2P node (e.g. a blockchain one) implementation - whic
 ## Usage
 
 ```shell
-$ cargo run <dns_seed_name> <port number> <timeout in secs>
+$ cargo run <dns_seed_name> <port number> <timeout in milliseconds>
 ```
 
 Suggested DNS seed names include:
@@ -46,7 +46,7 @@ Suggested DNS seed names include:
 
 If a port number is not supplied, the default is `8333`.
 
-If a timeout is not supplied, the default network request timeout is 5 seconds.
+If a timeout is not supplied, the default network request timeout is 5000 milliseconds.
 
 ## Possible Output
 
@@ -56,43 +56,53 @@ However, the availability of a responsive P2P node at each of these IP addresses
 ```shell
 $ export RUST_LOG=info
 $ cargo run seed.bitcoin.jonasschnelli.ch
-   Compiling node-handshake v0.1.0 (/Users/chris/Developer/Eiger/node-handshake)
-    Finished dev [unoptimized + debuginfo] target(s) in 1.32s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.12s
      Running `target/debug/node-handshake seed.bitcoin.jonasschnelli.ch`
-2024-03-15T14:46:46.035849Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
+2024-03-18T15:13:47.213902Z  INFO node_handshake: Attempting handshakes with seed.bitcoin.jonasschnelli.ch:8333  Timeout = 5000 ms
+2024-03-18T15:13:47.287732Z  INFO node_handshake::dns_name_resolver: seed.bitcoin.jonasschnelli.ch resolves to 24 IP addresses
 
-2024-03-15T14:46:46.036019Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> NOT STARTED
-2024-03-15T14:46:46.036054Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> STARTED
-2024-03-15T14:46:51.036891Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (184.96.188.234) -> FAILED: TCP connection timed out
+2024-03-18T15:13:47.287825Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> NOT STARTED
+2024-03-18T15:13:47.287853Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> STARTED
+2024-03-18T15:13:47.336974Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 79.204.1.107:8333
+2024-03-18T15:13:47.337144Z  INFO node_handshake::handshake::btc_message: version: Sent
+2024-03-18T15:13:47.394395Z  INFO node_handshake::handshake::btc_message: version: Target node accepts messages up to version 70016
+2024-03-18T15:13:47.394474Z  INFO node_handshake::handshake::btc_message: verack: Sending 24 bytes to 79.204.1.107:8333
+2024-03-18T15:13:47.394553Z  INFO node_handshake::handshake::btc_message: verack: Sent
+2024-03-18T15:13:47.398562Z  WARN node_handshake::handshake::btc_message: Target node skipped verack.  Instead got Alert([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 255, 127, 254, 255, 255, 127, 1, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 255, 127, 0, 255, 255, 255, 127, 0, 47, 85, 82, 71, 69, 78, 84, 58, 32, 65, 108, 101, 114, 116, 32, 107, 101, 121, 32, 99, 111, 109, 112, 114, 111, 109, 105, 115, 101, 100, 44, 32, 117, 112, 103, 114, 97, 100, 101, 32, 114, 101, 113, 117, 105, 114, 101, 100, 0])
+2024-03-18T15:13:47.398643Z  WARN node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (79.204.1.107) -> PARTIAL
 
-2024-03-15T14:46:51.036940Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> NOT STARTED
-2024-03-15T14:46:51.036955Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> STARTED
-2024-03-15T14:46:56.037021Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (123.30.249.234) -> FAILED: TCP connection timed out
-
-2024-03-15T14:46:56.037065Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> NOT STARTED
-2024-03-15T14:46:56.037081Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> STARTED
-2024-03-15T14:46:56.197124Z  INFO node_handshake::handshake::send_message: version: Sending 70001 (127 bytes) to target node 143.110.147.13:8333
-2024-03-15T14:46:56.197289Z  INFO node_handshake::handshake::send_message: version: Sent
-2024-03-15T14:46:56.378334Z  INFO node_handshake::handshake::bitcoin: version: Target node accepts messages up to version 70015
-2024-03-15T14:46:56.378403Z  INFO node_handshake::handshake::send_message: verack: Sending 24 bytes to 143.110.147.13:8333
-2024-03-15T14:46:56.378458Z  INFO node_handshake::handshake::send_message: verack: Sent
-2024-03-15T14:46:56.378553Z  INFO node_handshake::handshake::bitcoin: verack received
-2024-03-15T14:46:56.378658Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (143.110.147.13) -> SUCCESS
+2024-03-18T15:13:47.398659Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> NOT STARTED
+2024-03-18T15:13:47.398671Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> STARTED
+2024-03-18T15:13:52.399450Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (91.190.121.45) -> FAILED: TCP connection timed out
 
 ...snip...
 
-2024-03-15T14:47:44.498947Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> NOT STARTED
-2024-03-15T14:47:44.498961Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> STARTED
-2024-03-15T14:47:44.753985Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (186.137.174.198) -> FAILED: TCP Connection refused (os error 61)
+2024-03-18T15:14:12.404286Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> NOT STARTED
+2024-03-18T15:14:12.404300Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> STARTED
+2024-03-18T15:14:12.462803Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 37.60.239.26:8333
+2024-03-18T15:14:12.462905Z  INFO node_handshake::handshake::btc_message: version: Sent
+2024-03-18T15:14:12.485318Z  INFO node_handshake::handshake::btc_message: version: Target node accepts messages up to version 70016
+2024-03-18T15:14:12.485367Z  INFO node_handshake::handshake::btc_message: verack: Sending 24 bytes to 37.60.239.26:8333
+2024-03-18T15:14:12.485419Z  INFO node_handshake::handshake::btc_message: verack: Sent
+2024-03-18T15:14:12.486083Z  INFO node_handshake::handshake::btc_message: verack received
+2024-03-18T15:14:12.486148Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.239.26) -> SUCCESS
 
-2024-03-15T14:47:44.754051Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> NOT STARTED
-2024-03-15T14:47:44.754074Z  INFO node_handshake::handshake::bitcoin: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> STARTED
-2024-03-15T14:47:49.754653Z ERROR node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (65.35.192.46) -> FAILED: TCP connection timed out
+2024-03-18T15:14:12.486163Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.225.80) -> NOT STARTED
+2024-03-18T15:14:12.486174Z  INFO node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.225.80) -> STARTED
+2024-03-18T15:14:12.511101Z  INFO node_handshake::handshake::btc_message: version: Sending 127 bytes to 37.60.225.80:8333
+2024-03-18T15:14:12.511195Z  INFO node_handshake::handshake::btc_message: version: Sent
+2024-03-18T15:14:12.531556Z  INFO node_handshake::handshake::btc_message: version: Target node accepts messages up to version 70016
+2024-03-18T15:14:12.531606Z  INFO node_handshake::handshake::btc_message: verack: Sending 24 bytes to 37.60.225.80:8333
+2024-03-18T15:14:12.531667Z  INFO node_handshake::handshake::btc_message: verack: Sent
+2024-03-18T15:14:12.551808Z  WARN node_handshake::handshake::btc_message: Target node skipped verack.  Instead got Ping(2736944585018940862)
+2024-03-18T15:14:12.551883Z  WARN node_handshake::handshake: Handshake with seed.bitcoin.jonasschnelli.ch (37.60.225.80) -> PARTIAL
 
-2024-03-15T14:47:49.754745Z  INFO node_handshake::handshake: Summary of handshakes to seed.bitcoin.jonasschnelli.ch
-2024-03-15T14:47:49.754769Z  INFO node_handshake::handshake:    Success = 11
-2024-03-15T14:47:49.754786Z  INFO node_handshake::handshake:    Partial = 0
-2024-03-15T14:47:49.754802Z  INFO node_handshake::handshake:    Failed  = 13
+...snip...
+
+2024-03-18T15:14:47.318848Z  INFO node_handshake::handshake: Summary of handshakes to seed.bitcoin.jonasschnelli.ch
+2024-03-18T15:14:47.318889Z  INFO node_handshake::handshake:    Success = 2
+2024-03-18T15:14:47.318908Z  INFO node_handshake::handshake:    Partial = 9
+2024-03-18T15:14:47.318925Z  INFO node_handshake::handshake:    Failed  = 13
 ```
 
 ## Testing

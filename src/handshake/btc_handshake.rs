@@ -12,6 +12,18 @@ pub enum BitcoinHandshakeState {
     PartiallyComplete(String),
 }
 
+impl BitcoinHandshakeState {
+    pub fn short_txt(&self) -> String {
+        match self {
+            BitcoinHandshakeState::NotStarted => format!("{}", "NOT STARTED"),
+            BitcoinHandshakeState::Started => format!("{}", "STARTED"),
+            BitcoinHandshakeState::Success => format!("{}", "SUCCESS"),
+            BitcoinHandshakeState::Failed(_) => format!("{}", "FAILED"),
+            BitcoinHandshakeState::PartiallyComplete(_) => format!("{}", "PARTIAL"),
+        }
+    }
+}
+
 impl Display for BitcoinHandshakeState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -53,6 +65,15 @@ impl BitcoinHandshake {
                 FIVE_SECONDS
             },
         }
+    }
+
+    pub fn short_txt(&self) -> String {
+        format!(
+            "Handshake with {} ({:?}) -> {}",
+            self.dns_name,
+            self.ip_addr,
+            self.state.short_txt()
+        )
     }
 }
 
