@@ -107,7 +107,6 @@ If DNS is unable to resolve the name of a seed node, you will see output similar
 
 ```shell
 cargo run showy-toys.aeza.network
-   Compiling node-handshake v0.1.0 (/Users/chris/Developer/Eiger/node-handshake)
     Finished dev [unoptimized + debuginfo] target(s) in 1.43s
      Running `target/debug/node-handshake showy-toys.aeza.network`
 2024-03-18T15:24:31.936206Z  INFO node_handshake: Attempting handshake(s) with showy-toys.aeza.network:8333  Timeout = 5000 ms
